@@ -1,0 +1,38 @@
+# CortexGuard repository
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies if tooling is added later
+node_modules/
+vendor/
+
+# Build and coverage output
+dist/
+build/
+coverage/
+
+# Local development files
+*.local

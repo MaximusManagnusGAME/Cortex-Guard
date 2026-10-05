@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080c15">
+  <meta name="description" content="CortexGuard-1-En — Version 1 English profanity and Unicode evasion filter.">
+  <title>CortexGuard-1-En — Version 1</title>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080c15;
+      --surface: #0e1523;
+      --surface-2: #121b2d;
+      --surface-3: #0a111d;
+      --border: #202c41;
+      --border-soft: #182337;
+      --text: #f5f7fb;
+      --muted: #94a2b8;
+      --muted-2: #68778f;
+      --accent: #79a8ff;
+      --success: #42d49a;
+      --danger: #ff6d80;
+      --shadow: 0 24px 70px rgba(0,0,0,.28);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --max-width: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-width: 320px;
+      background: var(--bg);
+      -webkit-text-size-adjust: 100%;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% -10%, rgba(93,142,234,.18), transparent 31rem),
+        radial-gradient(circle at 100% 100%, rgba(71,95,150,.10), transparent 28rem),
+        var(--bg);
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .shell {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 38px;
+    }
+
+    .topbar {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .brand-mark,
+    .icon-box,
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #162137 0%, #101827 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+    }
+
+    .brand-mark svg,
+    .icon-box svg,
+    .feature-icon svg {
+      color: var(--accent);
+      stroke-width: 1.9;
+    }
+
+    .brand-mark svg { width: 19px; height: 19px; }
+
+    .brand-text { min-width: 0; }
+
+    .brand-name {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 820;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-meta {
+      margin-top: 2px;
+      color: var(--muted-2);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(14,21,35,.78);
+      color: #c4d0e2;
+      font-size: 11px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .status svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2;
+      color: var(--success);
+    }
+
+    .status.failed svg { color: var(--danger); }
+    .status.failed { color: #ffd0d7; }
+
+    .hero,
+    .analyzer {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: rgba(14,21,35,.93);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-main {
+      padding: clamp(28px, 5vw, 50px);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      color: #b3c2dc;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow svg {
+      width: 15px;
+      height: 15px;
+      color: var(--accent);
+      stroke-width: 2;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-size: clamp(34px, 5.3vw, 60px);
+      line-height: 1.02;
+      letter-spacing: -.045em;
+      font-weight: 860;
+      text-wrap: balance;
+    }
+
+    .hero-copy {
+      max-width: 830px;
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(14px, 1.7vw, 17px);
+      line-height: 1.7;
+    }
+
+    .capabilities {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+
+    .capability {
+      min-width: 0;
+      padding: 18px 20px;
+      border-right: 1px solid var(--border-soft);
+    }
+
+    .capability:last-child { border-right: 0; }
+
+    .capability-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .capability-top svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+      stroke-width: 1.9;
+      flex: 0 0 auto;
+    }
+
+    .capability-value {
+      margin-top: 7px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #dce5f3;
+      font-size: 14px;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .analyzer {
+      margin-top: 18px;
+      padding: clamp(20px, 3vw, 30px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-copy { min-width: 0; }
+
+    .section-label {
+      margin: 0 0 6px;
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(20px, 2.6vw, 26px);
+      line-height: 1.2;
+      letter-spacing: -.025em;
+    }
+
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+    }
+
+    .icon-box svg { width: 19px; height: 19px; }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .field {
+      position: relative;
+      display: block;
+      min-width: 0;
+      height: 52px;
+    }
+
+    .field > svg {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 16px;
+      width: 18px;
+      height: 18px;
+      color: var(--muted-2);
+      stroke-width: 1.9;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .field input {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      padding: 0 16px 0 46px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      color: var(--text);
+      background: var(--surface-2);
+      font-size: 15px;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .field input::placeholder { color: #65748a; }
+
+    .field input:focus {
+      border-color: var(--accent);
+      background: #152036;
+      box-shadow: 0 0 0 4px rgba(121,168,255,.11);
+    }
+
+    .analyze-button {
+      min-width: 128px;
+      height: 52px;
+      border: 0;
+      border-radius: var(--radius-md);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 18px;
+      cursor: pointer;
+      color: #071020;
+      background: linear-gradient(180deg, #8ab5ff 0%, #6b9df6 100%);
+      box-shadow: 0 9px 26px rgba(76,124,214,.18);
+      font-size: 14px;
+      font-weight: 850;
+      transition: transform .15s ease, filter .15s ease;
+    }
+
+    .analyze-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.035);
+    }
+
+    .analyze-button:active { transform: translateY(0); }
+
+    .analyze-button svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.2;
+    }
+
+    .result {
+      display: none;
+      margin-top: 12px;
+      padding: 14px 15px;
+      border: 1px solid;
+      border-radius: var(--radius-md);
+    }
+
+    .result.visible {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+    }
+
+    .result.allowed {
+      border-color: rgba(66,212,154,.34);
+      background: rgba(66,212,154,.075);
+      color: #caf6e3;
+    }
+
+    .result.denied {
+      border-color: rgba(255,109,128,.36);
+      background: rgba(255,109,128,.075);
+      color: #ffd2d9;
+    }
+
+    .result > svg {
+      width: 18px;
+      height: 18px;
+      margin-top: 1px;
+      stroke-width: 2.1;
+      flex: 0 0 auto;
+    }
+
+    .result-title {
+      font-size: 13px;
+      font-weight: 850;
+      line-height: 1.35;
+    }
+
+    .result-detail {
+      margin-top: 3px;
+      color: inherit;
+      opacity: .72;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .output {
+      margin-top: 12px;
+      padding: 14px 15px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      background: var(--surface-3);
+    }
+
+    .output-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: #c2cee0;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .output-head svg {
+      width: 14px;
+      height: 14px;
+      color: var(--accent);
+      stroke-width: 2;
+    }
+
+    .output-text {
+      min-height: 20px;
+      margin: 0;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      color: #8998ae;
+      font: 12px/1.6 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .feature-card {
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: rgba(14,21,35,.78);
+    }
+
+    .feature-icon {
+      width: 34px;
+      height: 34px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+    }
+
+    .feature-icon svg { width: 16px; height: 16px; }
+
+    .feature-title {
+      margin: 0;
+      color: #dce5f3;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .feature-text {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 3px 0;
+      color: var(--muted-2);
+      font-size: 11px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .footer-brand svg {
+      width: 13px;
+      height: 13px;
+      stroke-width: 2;
+    }
+
+    @media (max-width: 900px) {
+      .capabilities { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .capability:nth-child(2) { border-right: 0; }
+      .capability:nth-child(-n+2) { border-bottom: 1px solid var(--border-soft); }
+      .features { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        width: min(var(--max-width), calc(100% - 20px));
+        padding-top: 12px;
+      }
+
+      .topbar { margin-bottom: 14px; }
+      .hero, .analyzer { border-radius: 18px; }
+      .hero-main { padding: 24px 20px; }
+
+      h1 {
+        font-size: clamp(31px,10vw,46px);
+        line-height: 1.04;
+      }
+
+      .hero-copy {
+        margin-top: 14px;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .capabilities { grid-template-columns: 1fr; }
+
+      .capability {
+        border-right: 0;
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .capability:last-child { border-bottom: 0; }
+
+      .analyzer { padding: 20px; }
+      .input-row { grid-template-columns: 1fr; }
+      .analyze-button { width: 100%; }
+
+      footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .shell { width: min(var(--max-width), calc(100% - 16px)); }
+
+      .status {
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+      }
+
+      .status span { display: none; }
+      .brand-name { max-width: 190px; }
+      .section-header { align-items: flex-start; }
+      .icon-box { width: 36px; height: 36px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <div class="brand-text">
+          <p class="brand-name">CortexGuard-1-En</p>
+          <div class="brand-meta">Version 1</div>
+        </div>
+      </div>
+
+      <div id="engineStatus" class="status" title="Engine status">
+        <i data-lucide="activity"></i>
+        <span>Engine ready</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">
+          <i data-lucide="scan-search"></i>
+          English moderation engine
+        </div>
+
+        <h1>Stronger filtering against Unicode and text evasion.</h1>
+
+        <p class="hero-copy">
+          CortexGuard-1-En analyzes English profanity through multiple normalization and matching layers,
+          including Unicode confusables, invisible characters, leetspeak, masking, character insertion,
+          missing letters, transpositions, repeated characters and common obfuscation patterns.
+        </p>
+      </div>
+
+      <div class="capabilities">
+        <div class="capability">
+          <div class="capability-top">
+            <i data-lucide="languages"></i>
+            Language
+          </div>
+          <div class="capability-value">English only</div>
+        </div>
+
+        <div class="capability">
+          <div class="capability-top">
+            <i data-lucide="binary"></i>
+            Unicode
+          </div>
+          <div class="capability-value">Multi-layer folding</div>
+        </div>
+
+        <div class="capability">
+          <div class="capability-top">
+            <i data-lucide="radar"></i>
+            Detection
+          </div>
+          <div class="capability-value">Adaptive matching</div>
+        </div>
+
+        <div class="capability">
+          <div class="capability-top">
+            <i data-lucide="shield-check"></i>
+            Self-check
+          </div>
+          <div id="selfCheckValue" class="capability-value">Running</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="analyzer">
+      <div class="section-header">
+        <div class="section-copy">
+          <p class="section-label">Input analyzer</p>
+          <h2>Analyze a word or text fragment</h2>
+        </div>
+
+        <div class="icon-box" aria-hidden="true">
+          <i data-lucide="text-search"></i>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label class="field">
+          <i data-lucide="type"></i>
+          <input
+            id="word"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="Enter text to analyze"
+            aria-label="Text to analyze"
+          >
+        </label>
+
+        <button id="check" class="analyze-button" type="button">
+          <i data-lucide="scan-line"></i>
+          Analyze
+        </button>
+      </div>
+
+      <div id="result" class="result" role="status" aria-live="polite"></div>
+
+      <div class="output">
+        <div class="output-head">
+          <i data-lucide="terminal-square"></i>
+          Engine output
+        </div>
+        <pre id="debug" class="output-text">Waiting for input.</pre>
+      </div>
+    </section>
+
+    <section class="features" aria-label="Protection layers">
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <i data-lucide="fingerprint"></i>
+        </div>
+        <h3 class="feature-title">Unicode hardening</h3>
+        <p class="feature-text">
+          Normalizes compatibility characters, combining marks, invisible controls, regional indicators,
+          decorative alphabets and common cross-script confusables.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <i data-lucide="shuffle"></i>
+        </div>
+        <h3 class="feature-title">Evasion resistance</h3>
+        <p class="feature-text">
+          Handles selected character masking, missing letters, inserted letters, adjacent swaps,
+          repetition, leetspeak, phonetic substitutions and separator abuse.
+        </p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true">
+          <i data-lucide="shield"></i>
+        </div>
+        <h3 class="feature-title">Safer matching</h3>
+        <p class="feature-text">
+          Uses word-level and compact-span analysis instead of unrestricted fuzzy matching,
+          helping reduce false positives on ordinary English words.
+        </p>
+      </article>
+    </section>
+
+    <footer>
+      <div class="footer-brand">
+        <i data-lucide="shield"></i>
+        <span>CortexGuard-1-En — Version 1</span>
+      </div>
+      <span>Client-side demonstration. Server-side validation is required in production.</span>
+    </footer>
+  </main>
+
+<script>
+(() => {
+  "use strict";
+
+  const VERSION = "1";
+  const LANGUAGE = "en";
+  const MAX_SKELETONS = 768;
+  const MAX_SEGMENTS = 80;
+
+  /*
+    English-only base vocabulary.
+    The engine derives many obfuscated forms dynamically instead of storing
+    every spelling variation as a separate entry.
+  */
+  const BASE_TERMS = [
+    "fuck","motherfucker","clusterfuck","fuckboy","fuckface","fuckhead","fuckwit","fuckwad","fuckstick",
+    "shit","bullshit","horseshit","dipshit","shithead","shitbag","shitface","shitstain","shitshow","shitstorm",
+    "bitch","sonofabitch",
+    "cunt","cuntface",
+    "cock","cocksucker","cockhead",
+    "dick","dickhead","dickwad","dickweed",
+    "pussy",
+    "twat",
+    "prick",
+    "whore",
+    "slut",
+    "asshole","arsehole","dumbass","jackass","smartass",
+    "wanker","tosser","bellend","knobhead",
+    "douche","douchebag",
+    "bollocks",
+    "bastard",
+    "bugger",
+    "piss","pisshead",
+    "crap",
+    "jerkoff","jackoff",
+    "blowjob","handjob",
+    "cum","jizz",
+    "boner",
+    "ballsack","nutsack",
+    "buttfuck","butthead",
+    "goddamn","dammit","damn",
+    "bloody",
+    "arse",
+    "ass",
+    "idiot","moron","imbecile",
+    "scumbag",
+    "sucker"
+  ];
+
+  const SAFE_EXACT = new Set([
+    "class","classic","classical","classification",
+    "pass","passion","passive","compass",
+    "assistant","assignment","assess","asset",
+    "duck","truck","funk","quick","button","computer",
+    "shitake","shiitake","cocktail","scunthorpe"
+  ]);
+
+  /*
+    Character options include common Latin lookalikes, Greek, Cyrillic,
+    Armenian-like forms, small-cap/IPA forms, CJK/Bopomofo shapes,
+    enclosed symbols and leetspeak.
+  */
+  const CHAR_OPTIONS = new Map(Object.entries({
+    "а":["a"],"α":["a"],"ɑ":["a"],"Ꭺ":["a"],"Ａ":["a"],"🅰":["a"],"🄰":["a"],"ⓐ":["a"],"Ⓐ":["a"],"@":["a"],"4":["a"],"Λ":["a"],
+    "Ь":["b"],"ь":["b"],"Β":["b"],"В":["b"],"Ᏼ":["b"],"Ｂ":["b"],"🅱":["b"],"🄱":["b"],"ⓑ":["b"],"8":["b"],"ß":["b","ss"],
+    "с":["c"],"ϲ":["c"],"ⅽ":["c"],"匚":["c"],"ƈ":["c"],"Ｃ":["c"],"🅲":["c"],"🄲":["c"],"ⓒ":["c"],"[":["c"],"{":["c"],"(":["c"],"¢":["c"],"©":["c"],"Ϲ":["c"],
+    "ԁ":["d"],"ⅾ":["d"],"Ｄ":["d"],"🅳":["d"],"🄳":["d"],"ⓓ":["d"],"ժ":["d"],
+    "е":["e"],"ε":["e"],"Ε":["e"],"ҽ":["e"],"Ｅ":["e"],"🅴":["e"],"🄴":["e"],"ⓔ":["e"],"3":["e"],"€":["e"],"℮":["e"],
+    "ϝ":["f"],"ғ":["f"],"ƒ":["f"],"ᖴ":["f"],"千":["f"],"Ｆ":["f"],"🅵":["f"],"🄵":["f"],"ⓕ":["f"],"ꞙ":["f"],
+    "ɡ":["g"],"ԍ":["g"],"Ｇ":["g"],"🅶":["g"],"🄶":["g"],"ⓖ":["g"],"6":["g"],"9":["g","q"],
+    "һ":["h"],"Η":["h"],"Н":["h"],"հ":["h"],"Ｈ":["h"],"🅷":["h"],"🄷":["h"],"ⓗ":["h"],"#":["h","?"],
+    "і":["i"],"ι":["i"],"Ι":["i","l"],"І":["i","l"],"Ⅰ":["i","l"],"ı":["i"],"ɪ":["i"],"ｉ":["i"],"🅸":["i"],"🄸":["i"],"ⓘ":["i"],"!":["i"],"|":["i","l"],"1":["i","l"],"¡":["i"],
+    "ј":["j"],"Ј":["j"],"ʝ":["j"],"ｊ":["j"],"🅹":["j"],"🄹":["j"],"ⓙ":["j"],
+    "κ":["k"],"Κ":["k"],"К":["k"],"к":["k"],"Ҝ":["k"],"ҝ":["k"],"ƙ":["k"],"ĸ":["k"],"ᛕ":["k"],"Ｋ":["k"],"🅺":["k"],"🄺":["k"],"ⓚ":["k"],"<":["k","c"],"|<":["k"],
+    "ⅼ":["l"],"ӏ":["l"],"ʟ":["l"],"Լ":["l"],"Ｌ":["l"],"🅻":["l"],"🄻":["l"],"ⓛ":["l"],"£":["l"],
+    "м":["m"],"Μ":["m"],"ⅿ":["m"],"Ｍ":["m"],"🅼":["m"],"🄼":["m"],"ⓜ":["m"],"rn":["m"],
+    "ո":["n"],"п":["n"],"Ν":["n"],"Ｎ":["n"],"🅽":["n"],"🄽":["n"],"ⓝ":["n"],"η":["n"],
+    "о":["o"],"ο":["o"],"Ο":["o"],"О":["o"],"Օ":["o"],"Ｏ":["o"],"🅾":["o"],"🄾":["o"],"ⓞ":["o"],"0":["o"],"°":["o"],
+    "р":["p"],"ρ":["p"],"Ρ":["p"],"Р":["p"],"Ｐ":["p"],"🅿":["p"],"🄿":["p"],"ⓟ":["p"],"þ":["p"],
+    "ԛ":["q"],"գ":["q"],"Ｑ":["q"],"🆀":["q"],"ⓠ":["q"],
+    "г":["r"],"ʀ":["r"],"Ｒ":["r"],"🆁":["r"],"ⓡ":["r"],"®":["r"],
+    "ѕ":["s"],"ꜱ":["s"],"Տ":["s"],"Ｓ":["s"],"🆂":["s"],"ⓢ":["s"],"$":["s"],"5":["s"],"§":["s"],
+    "τ":["t"],"Τ":["t"],"Т":["t"],"ᴛ":["t"],"Ｔ":["t"],"🆃":["t"],"ⓣ":["t"],"7":["t"],"+":["t"],"†":["t"],
+    "υ":["u"],"ս":["u"],"ц":["u"],"ʋ":["u"],"μ":["u"],"µ":["u"],"ㄩ":["u"],"Ｕ":["u"],"🆄":["u"],"ⓤ":["u"],"∪":["u"],
+    "ν":["v","u"],"ѵ":["v","u"],"∨":["v","u"],"Ｖ":["v","u"],"🆅":["v","u"],"ⓥ":["v","u"],
+    "ԝ":["w"],"ω":["w"],"ш":["w"],"Ｗ":["w"],"🆆":["w"],"ⓦ":["w"],"vv":["w"],
+    "х":["x"],"Χ":["x"],"Х":["x"],"ⅹ":["x"],"Ｘ":["x"],"🆇":["x"],"ⓧ":["x"],"×":["x"],
+    "у":["y"],"Υ":["y"],"ү":["y"],"Ｙ":["y"],"🆈":["y"],"ⓨ":["y"],"¥":["y"],
+    "Ζ":["z"],"ᴢ":["z"],"Ｚ":["z"],"🆉":["z"],"ⓩ":["z"],"2":["z"]
+  }));
+
+  const MASK_CHARS = new Set(["*","?","~","^","•","●","▪","■","◼","◆","◇","¤"]);
+  const DROP_CHARS = new Set([
+    " ","\t","\n","\r",".",",","_","-","—","–","·","/","\\",":",";","'","\"","`",
+    "…","‧","∙","⋅","。","・","･","，","､"
+  ]);
+
+  const INFLECTION_SUFFIXES = [
+    "s","es","ed","er","ers","ing","ings","y","ies","ier","iest"
+  ];
+
+  function decodeEscapes(input) {
+    let value = String(input ?? "");
+
+    value = value.replace(/\\u\{([0-9a-fA-F]{1,6})\}/g, (_, hex) => {
+      const cp = parseInt(hex, 16);
+      return cp <= 0x10FFFF ? String.fromCodePoint(cp) : _;
+    });
+
+    value = value.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    );
+
+    value = value.replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    );
+
+    value = value.replace(/U\+([0-9a-fA-F]{4,6})/gi, (_, hex) => {
+      const cp = parseInt(hex, 16);
+      return cp <= 0x10FFFF ? String.fromCodePoint(cp) : _;
+    });
+
+    value = value.replace(/&#x([0-9a-fA-F]+);?/g, (_, hex) => {
+      const cp = parseInt(hex, 16);
+      return cp <= 0x10FFFF ? String.fromCodePoint(cp) : _;
+    });
+
+    value = value.replace(/&#([0-9]+);?/g, (_, dec) => {
+      const cp = parseInt(dec, 10);
+      return cp <= 0x10FFFF ? String.fromCodePoint(cp) : _;
+    });
+
+    return value;
+  }
+
+  function preprocess(input) {
+    return decodeEscapes(input)
+      .normalize("NFKD")
+      .toLowerCase()
+      .replace(/\p{M}+/gu, "")
+      .replace(/[\p{Cf}\p{Cc}\uFE00-\uFE0F\u{E0100}-\u{E01EF}]/gu, "");
+  }
+
+  function regionalIndicatorToAscii(ch) {
+    const cp = ch.codePointAt(0);
+    if (cp >= 0x1F1E6 && cp <= 0x1F1FF) {
+      return String.fromCharCode(97 + (cp - 0x1F1E6));
+    }
+    return null;
+  }
+
+  function charOptions(ch) {
+    const regional = regionalIndicatorToAscii(ch);
+    if (regional) return [regional];
+
+    if (CHAR_OPTIONS.has(ch)) return CHAR_OPTIONS.get(ch);
+
+    if (/^[a-z]$/.test(ch)) {
+      if (ch === "v") return ["v","u"];
+      return [ch];
+    }
+
+    if (/^[0-9]$/.test(ch)) return [ch];
+    if (MASK_CHARS.has(ch)) return ["?"];
+    if (DROP_CHARS.has(ch)) return [""];
+    if (/[\p{L}\p{N}]/u.test(ch)) return ["?"];
+
+    return [""];
+  }
+
+  function buildBaseSkeletons(input) {
+    const source = preprocess(input);
+    let variants = new Set([""]);
+
+    for (const ch of source) {
+      const options = charOptions(ch);
+      const next = new Set();
+
+      for (const base of variants) {
+        for (const option of options) {
+          next.add(base + option);
+          if (next.size >= MAX_SKELETONS) break;
+        }
+        if (next.size >= MAX_SKELETONS) break;
+      }
+
+      variants = next;
+    }
+
+    return [...variants];
+  }
+
+  function rewriteVariants(value) {
+    const out = new Set([value]);
+
+    const collapsed = value.replace(/(.)\1{1,}/g, "$1");
+    out.add(collapsed);
+
+    const rules = [
+      [/\bph/g, "f"],
+      [/ph/g, "f"],
+      [/vv/g, "w"],
+      [/rn/g, "m"],
+      [/cl/g, "d"],
+      [/qk/g, "ck"],
+      [/kk/g, "ck"]
+    ];
+
+    const inputs = [value, collapsed];
+
+    for (const current of inputs) {
+      for (const [pattern, replacement] of rules) {
+        out.add(current.replace(pattern, replacement));
+      }
+
+      let combined = current;
+      for (const [pattern, replacement] of rules) {
+        combined = combined.replace(pattern, replacement);
+      }
+      out.add(combined);
+    }
+
+    return [...out];
+  }
+
+  function buildSkeletons(input) {
+    const result = new Set();
+
+    for (const base of buildBaseSkeletons(input)) {
+      for (const variant of rewriteVariants(base)) {
+        result.add(variant);
+        if (result.size >= MAX_SKELETONS) break;
+      }
+      if (result.size >= MAX_SKELETONS) break;
+    }
+
+    return [...result];
+  }
+
+  function canonicalTerm(term) {
+    return buildSkeletons(term)[0] || "";
+  }
+
+  function wildcardEqual(a, b) {
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] === "?" || b[i] === "?") continue;
+      if (a[i] !== b[i]) return false;
+    }
+
+    return true;
+  }
+
+  function containsWildcardPattern(candidate, target) {
+    if (candidate.length < target.length) return false;
+
+    for (let i = 0; i <= candidate.length - target.length; i++) {
+      if (wildcardEqual(candidate.slice(i, i + target.length), target)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function internalDeletionForms(word, maxDeletions = 1) {
+    const out = new Set([word]);
+
+    function walk(current, start, remaining) {
+      if (remaining <= 0) return;
+
+      for (let i = Math.max(1, start); i < current.length - 1; i++) {
+        const next = current.slice(0, i) + current.slice(i + 1);
+        out.add(next);
+        walk(next, i, remaining - 1);
+      }
+    }
+
+    walk(word, 1, maxDeletions);
+    return [...out];
+  }
+
+  function adjacentTranspositions(word) {
+    const out = new Set();
+
+    for (let i = 0; i < word.length - 1; i++) {
+      if (word[i] === word[i + 1]) continue;
+      const chars = word.split("");
+      [chars[i], chars[i + 1]] = [chars[i + 1], chars[i]];
+      out.add(chars.join(""));
+    }
+
+    return [...out];
+  }
+
+  function canRemoveExtras(candidate, target, maxExtra) {
+    if (candidate.length <= target.length) return false;
+    if (candidate.length - target.length > maxExtra) return false;
+
+    function walk(value, removalsLeft, start) {
+      if (wildcardEqual(value, target)) return true;
+      if (removalsLeft === 0 || value.length <= target.length) return false;
+
+      for (let i = start; i < value.length; i++) {
+        const next = value.slice(0, i) + value.slice(i + 1);
+        if (walk(next, removalsLeft - 1, i)) return true;
+      }
+
+      return false;
+    }
+
+    return walk(candidate, maxExtra, 0);
+  }
+
+  function isInflectedForm(candidate, target) {
+    if (target.length < 4 || !candidate.startsWith(target)) return false;
+    const suffix = candidate.slice(target.length);
+    return INFLECTION_SUFFIXES.includes(suffix);
+  }
+
+  function boundedDamerau(a, b, maxDistance) {
+    if (Math.abs(a.length - b.length) > maxDistance) return maxDistance + 1;
+
+    const rows = a.length + 1;
+    const cols = b.length + 1;
+    const d = Array.from({ length: rows }, () => new Array(cols).fill(0));
+
+    for (let i = 0; i < rows; i++) d[i][0] = i;
+    for (let j = 0; j < cols; j++) d[0][j] = j;
+
+    for (let i = 1; i < rows; i++) {
+      let rowMin = maxDistance + 1;
+
+      for (let j = 1; j < cols; j++) {
+        const same = a[i - 1] === b[j - 1] || a[i - 1] === "?" || b[j - 1] === "?";
+        const cost = same ? 0 : 1;
+
+        d[i][j] = Math.min(
+          d[i - 1][j] + 1,
+          d[i][j - 1] + 1,
+          d[i - 1][j - 1] + cost
+        );
+
+        if (
+          i > 1 && j > 1 &&
+          a[i - 1] === b[j - 2] &&
+          a[i - 2] === b[j - 1]
+        ) {
+          d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+        }
+
+        rowMin = Math.min(rowMin, d[i][j]);
+      }
+
+      if (rowMin > maxDistance) return maxDistance + 1;
+    }
+
+    return d[a.length][b.length];
+  }
+
+  const PREPARED = BASE_TERMS.map(term => {
+    const canonical = canonicalTerm(term);
+    const maxMissing = canonical.length >= 8 ? 2 : 1;
+
+    return {
+      term,
+      canonical,
+      missing: internalDeletionForms(canonical, maxMissing),
+      swapped: adjacentTranspositions(canonical)
+    };
+  });
+
+  function matchesPrepared(candidate, prepared, mode = "token") {
+    const target = prepared.canonical;
+
+    if (!candidate || !target) return null;
+
+    if (wildcardEqual(candidate, target)) {
+      return { rule: "exact", form: target };
+    }
+
+    for (const form of prepared.missing) {
+      if (form !== target && wildcardEqual(candidate, form)) {
+        return { rule: "missing-letter", form };
+      }
+    }
+
+    for (const form of prepared.swapped) {
+      if (wildcardEqual(candidate, form)) {
+        return { rule: "transposition", form };
+      }
+    }
+
+    const maxExtra = target.length >= 8 ? 2 : 1;
+    if (canRemoveExtras(candidate, target, maxExtra)) {
+      return { rule: "inserted-character", form: target };
+    }
+
+    if (isInflectedForm(candidate, target)) {
+      return { rule: "inflection", form: target };
+    }
+
+    /*
+      Arbitrary fuzzy substitution is intentionally limited to longer terms.
+      Applying unrestricted distance-1 matching to short terms would turn
+      ordinary words such as "duck" into false positives for "fuck".
+    */
+    if (target.length >= 7) {
+      const maxDistance = target.length >= 10 ? 2 : 1;
+      if (boundedDamerau(candidate, target, maxDistance) <= maxDistance) {
+        return { rule: "bounded-fuzzy", form: target };
+      }
+    }
+
+    if (mode === "token" && target.length >= 5 && containsWildcardPattern(candidate, target)) {
+      return { rule: "contained", form: target };
+    }
+
+    return null;
+  }
+
+  function collectSegments(raw) {
+    const value = decodeEscapes(raw);
+    const segments = new Set();
+
+    const trimmed = value.trim();
+    if (trimmed) segments.add(trimmed);
+
+    /*
+      Word-level segmentation catches profanity inside normal sentences,
+      while retaining the full original segment catches punctuation-based
+      spelling such as f.u.c.k or f-u-c-k.
+    */
+    for (const part of value.split(/\s+/u)) {
+      if (part) segments.add(part);
+    }
+
+    for (const part of value.split(/[\s_\-—–/\\.,;:]+/u)) {
+      if (part) segments.add(part);
+    }
+
+    return [...segments].slice(0, MAX_SEGMENTS);
+  }
+
+  function detectProfanity(raw) {
+    const original = String(raw ?? "");
+    const normalizedExact = preprocess(original).replace(/[^a-z]/g, "");
+
+    if (SAFE_EXACT.has(normalizedExact)) {
+      return {
+        blocked: false,
+        matched: null,
+        rule: "safe-exact",
+        skeleton: normalizedExact,
+        skeletons: [normalizedExact],
+        segment: original
+      };
+    }
+
+    const segments = collectSegments(original);
+    const checkedSkeletons = [];
+
+    for (const segment of segments) {
+      const skeletons = buildSkeletons(segment);
+
+      for (const skeleton of skeletons) {
+        checkedSkeletons.push(skeleton);
+
+        const safeCandidate = skeleton.replace(/\?/g, "");
+        if (SAFE_EXACT.has(safeCandidate)) continue;
+
+        for (const prepared of PREPARED) {
+          const match = matchesPrepared(skeleton, prepared, "token");
+
+          if (match) {
+            return {
+              blocked: true,
+              matched: prepared.term,
+              rule: match.rule,
+              form: match.form,
+              skeleton,
+              skeletons: [...new Set(checkedSkeletons)].slice(0, 80),
+              segment
+            };
+          }
+        }
+      }
+    }
+
+    /*
+      Compact pass catches attacks split with spaces or separators:
+      f u c k, b ! t c h, etc.
+      This pass only uses stronger equality/edit rules and avoids general
+      substring matching across a complete sentence.
+    */
+    const compactSkeletons = buildSkeletons(original);
+
+    for (const skeleton of compactSkeletons) {
+      for (const prepared of PREPARED) {
+        const match = matchesPrepared(skeleton, prepared, "compact");
+
+        if (match) {
+          return {
+            blocked: true,
+            matched: prepared.term,
+            rule: "compact-" + match.rule,
+            form: match.form,
+            skeleton,
+            skeletons: [...new Set([...checkedSkeletons, ...compactSkeletons])].slice(0, 80),
+            segment: original
+          };
+        }
+      }
+    }
+
+    return {
+      blocked: false,
+      matched: null,
+      rule: null,
+      form: null,
+      skeleton: compactSkeletons[0] || "",
+      skeletons: [...new Set([...checkedSkeletons, ...compactSkeletons])].slice(0, 80),
+      segment: original
+    };
+  }
+
+  const SELF_TESTS = [
+    ["fuck", true],
+    ["FUCK", true],
+    ["fck", true],
+    ["fuk", true],
+    ["fu[k", true],
+    ["f.u.c.k", true],
+    ["f-u-c-k", true],
+    ["f u c k", true],
+    ["fŭč̣ƙ", true],
+    ["千ㄩ匚Ҝ", true],
+    ["🅵🆄🅲🅺", true],
+    ["🇫 🇺 🇨 🇰", true],
+    ["ＦＵＣＫ", true],
+    ["ⓕⓤⓒⓚ", true],
+    ["𝐟𝐮𝐜𝐤", true],
+    ["𝕗𝕦𝕔𝕜", true],
+    ["𝖋𝖚𝖈𝖐", true],
+    ["f\u200Bu\u200Cc\u200Dk", true],
+    ["fυсκ", true],
+    ["ƒυсƙ", true],
+    ["fvck", true],
+    ["fu日k", true],
+    ["f💩u💩c💩k", true],
+    ["phuck", true],
+    ["f**k", true],
+    ["fcuk", true],
+    ["fuqck", true],
+    ["fuuuuuck", true],
+    ["\\u0066\\u0075\\u0063\\u006b", true],
+    ["&#102;&#117;&#99;&#107;", true],
+    ["U+0066 U+0075 U+0063 U+006B", true],
+
+    ["shit", true],
+    ["sht", true],
+    ["sh!t", true],
+    ["sh1t", true],
+    ["s.h.i.t", true],
+    ["ѕһіτ", true],
+    ["s**t", true],
+    ["shiiit", true],
+
+    ["bitch", true],
+    ["btch", true],
+    ["b!tch", true],
+    ["b1tch", true],
+    ["b*tch", true],
+    ["Ьіtсһ", true],
+    ["b i t c h", true],
+
+    ["motherfucker", true],
+    ["motherfckr", true],
+    ["asshole", true],
+    ["a$$hole", true],
+    ["dickhead", true],
+    ["d1ckhead", true],
+    ["bullshit", true],
+    ["bullsh1t", true],
+    ["douchebag", true],
+    ["wanker", true],
+    ["bastard", true],
+    ["This is bullshit", true],
+    ["what a dickhead", true],
+    ["you are a b!tch", true],
+
+    ["duck", false],
+    ["truck", false],
+    ["funk", false],
+    ["quick", false],
+    ["class", false],
+    ["classic", false],
+    ["classical", false],
+    ["classification", false],
+    ["passion", false],
+    ["passive", false],
+    ["assignment", false],
+    ["assistant", false],
+    ["assess", false],
+    ["asset", false],
+    ["hello", false],
+    ["computer", false],
+    ["button", false],
+    ["cocktail", false],
+    ["shiitake", false],
+    ["Scunthorpe", false],
+    ["This is a normal sentence", false]
+  ];
+
+  function runSelfTests() {
+    const failures = [];
+    let passed = 0;
+
+    for (const [input, expectedBlocked] of SELF_TESTS) {
+      const actual = detectProfanity(input).blocked;
+      const ok = actual === expectedBlocked;
+
+      if (ok) {
+        passed++;
+      } else {
+        failures.push({ input, expectedBlocked, actual });
+      }
+    }
+
+    return {
+      passed,
+      total: SELF_TESTS.length,
+      failures,
+      ok: failures.length === 0
+    };
+  }
+
+  const API = {
+    name: "CortexGuard-1-En",
+    version: VERSION,
+    language: LANGUAGE,
+    terms: [...BASE_TERMS],
+    preprocess,
+    buildSkeletons,
+    detectProfanity,
+    runSelfTests
+  };
+
+  globalThis.CortexGuard1En = API;
+
+  if (typeof document !== "undefined") {
+    const input = document.getElementById("word");
+    const button = document.getElementById("check");
+    const resultBox = document.getElementById("result");
+    const debugBox = document.getElementById("debug");
+    const engineStatus = document.getElementById("engineStatus");
+    const selfCheckValue = document.getElementById("selfCheckValue");
+
+    function refreshIcons() {
+      if (globalThis.lucide) {
+        lucide.createIcons({
+          attrs: { "aria-hidden": "true" }
+        });
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderResult(result) {
+      resultBox.className = "result visible " + (result.blocked ? "denied" : "allowed");
+
+      const icon = result.blocked ? "shield-x" : "shield-check";
+      const title = result.blocked ? "Blocked" : "Accepted";
+      const detail = result.blocked
+        ? `Matched "${escapeHtml(result.matched)}" using the ${escapeHtml(result.rule)} rule.`
+        : "No configured English profanity pattern was detected.";
+
+      resultBox.innerHTML = `
+        <i data-lucide="${icon}"></i>
+        <div>
+          <div class="result-title">${title}</div>
+          <div class="result-detail">${detail}</div>
+        </div>
+      `;
+
+      refreshIcons();
+    }
+
+    function analyze() {
+      const value = input.value;
+
+      if (!value.trim()) {
+        resultBox.className = "result visible denied";
+        resultBox.innerHTML = `
+          <i data-lucide="circle-alert"></i>
+          <div>
+            <div class="result-title">Input required</div>
+            <div class="result-detail">Enter text before running the analyzer.</div>
+          </div>
+        `;
+        debugBox.textContent = "Waiting for input.";
+        refreshIcons();
+        return;
+      }
+
+      const result = detectProfanity(value);
+      renderResult(result);
+
+      const candidatePreview = result.skeletons.length
+        ? result.skeletons.slice(0, 16).join(" | ")
+        : "(none)";
+
+      debugBox.textContent = [
+        `Input: ${JSON.stringify(value)}`,
+        `Candidates: ${candidatePreview}`,
+        result.blocked
+          ? `Match: ${result.matched} | rule=${result.rule} | form=${result.form}`
+          : "Match: none"
+      ].join("\n");
+    }
+
+    button.addEventListener("click", analyze);
+    input.addEventListener("keydown", event => {
+      if (event.key === "Enter") analyze();
+    });
+
+    const report = runSelfTests();
+
+    if (report.ok) {
+      selfCheckValue.textContent = `${report.passed}/${report.total} passed`;
+      engineStatus.classList.remove("failed");
+      engineStatus.querySelector("span").textContent = "Engine ready";
+    } else {
+      selfCheckValue.textContent = `${report.passed}/${report.total} passed`;
+      engineStatus.classList.add("failed");
+      engineStatus.querySelector("span").textContent = "Self-check failed";
+      console.error("CortexGuard-1-En self-test failures:", report.failures);
+    }
+
+    refreshIcons();
+  }
+})();
+</script>
+</body>
+</html>
